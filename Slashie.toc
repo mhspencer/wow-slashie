@@ -1,0 +1,4 @@
+## Interface: 11502
+## Title: Slashie
+## Notes: Clickable Slash Commands
+Slashie.lua
