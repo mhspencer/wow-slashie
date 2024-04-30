@@ -4,7 +4,7 @@
          ..\..\FrameXML\UI.xsd">
   <Script File="Slashie.lua"/>
   <Frame name="SlashieFrame">
-   <Scripts>
+   <Scripts> 
     <OnLoad>
     </OnLoad>
    </Scripts>
