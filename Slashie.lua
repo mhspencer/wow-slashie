@@ -8,18 +8,22 @@ local ftex = frame:CreateTexture()
 ftex:SetAllPoints(frame)
 ftex:SetColorTexture(0,0,0, .4)
 
--- movable window, needs to be loaded last
+-- autoscaling and movable frame, needs to be loaded last
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(self, event, addonName)
   if addonName == "Slashie" then
     local width = (self:GetNumChildren() * 60) + 10
 
+    self:SetPoint("BOTTOMLEFT", Slashie.db.profile["frame_x"], Slashie.db.profile["frame_y"])
     self:SetWidth(width)
     self:SetMovable(true)
     self:EnableMouse(true)
     self:RegisterForDrag("RightButton")
     self:SetScript("OnDragStart", self.StartMoving)
-    self:SetScript("OnDragStop", self.StopMovingOrSizing)
+    self:SetScript("OnDragStop", function() 
+      self:StopMovingOrSizing() 
+      Slashie:SetFramePos(self:GetLeft(), self:GetBottom())
+    end)
   end
 end)
 
@@ -33,6 +37,12 @@ function Slashie:ClickButton(btn_name)
     DoEmote("Dance")
   elseif btn_name == "/sleep" then
     DoEmote("Sleep")
+  elseif btn_name == "/sit" then
+    DoEmote("Sit")
+  elseif btn_name == "/wave" then
+    DoEmote("Wave")
+  elseif btn_name == "/laugh" then
+    DoEmote("Laugh")
   end
 end
 
