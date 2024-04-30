@@ -8,108 +8,61 @@ local ftex = frame:CreateTexture()
 ftex:SetAllPoints(frame)
 ftex:SetColorTexture(0,0,0, .4)
 
--- roll --
-local roll = CreateFrame("Button", nil, UIParent, "UIPanelButtonTemplate")
-roll:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 10, 5)
-roll:SetWidth(50)
-roll:SetHeight(20)
-roll:SetText("/roll")
-roll:SetNormalFontObject("GameFontNormalSmall")
+-- movable window, needs to be loaded last
+frame:RegisterEvent("ADDON_LOADED")
+frame:SetScript("OnEvent", function(self, event, addonName)
+  if addonName == "Slashie" then
+    local width = (self:GetNumChildren() * 60) + 10
 
-local ntex = roll:CreateTexture()
-ntex:SetTexture("Interface/Buttons/UI-Panel-Button-Up")
-ntex:SetTexCoord(0, 0.625, 0, 0.6875)
-ntex:SetAllPoints()
-roll:SetNormalTexture(ntex)
-
-local ptex = roll:CreateTexture()
-ptex:SetTexture("Interface/Buttons/UI-Panel-Button-Down")
-ptex:SetTexCoord(0, 0.625, 0, 0.6875)
-ptex:SetAllPoints()
-roll:SetPushedTexture(ptex)
-
-roll:SetScript('OnClick', function()
-  RandomRoll(1,100)
+    self:SetWidth(width)
+    self:SetMovable(true)
+    self:EnableMouse(true)
+    self:RegisterForDrag("RightButton")
+    self:SetScript("OnDragStart", self.StartMoving)
+    self:SetScript("OnDragStop", self.StopMovingOrSizing)
+  end
 end)
 
--- dance --
-local dance = CreateFrame("Button", nil, UIParent, "UIPanelButtonTemplate")
-dance:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 70, 5)
-dance:SetWidth(50)
-dance:SetHeight(20)
-dance:SetText("/dance")
-dance:SetNormalFontObject("GameFontNormalSmall")
+-- button handlers --
+function Slashie:ClickButton(btn_name)
+  if btn_name == "/reload" then
+    ReloadUI()
+  elseif btn_name == "/roll" then
+    RandomRoll(1,100)
+  elseif btn_name == "/dance" then
+    DoEmote("Dance")
+  elseif btn_name == "/sleep" then
+    DoEmote("Sleep")
+  end
+end
 
-local ntex = dance:CreateTexture()
-ntex:SetTexture("Interface/Buttons/UI-Panel-Button-Up")
-ntex:SetTexCoord(0, 0.625, 0, 0.6875)
-ntex:SetAllPoints()	
-dance:SetNormalTexture(ntex)
+function Slashie:CreateButton(btn_name, btn_count)
+  local x_offset = (btn_count * 60) + 10
+  local y_offset = 5
 
-local ptex = dance:CreateTexture()
-ptex:SetTexture("Interface/Buttons/UI-Panel-Button-Down")
-ptex:SetTexCoord(0, 0.625, 0, 0.6875)
-ptex:SetAllPoints()
-dance:SetPushedTexture(ptex)
+  local btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+  btn:SetIgnoreParentAlpha(true)
+  btn:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", x_offset, y_offset)
+  btn:SetWidth(50)
+  btn:SetHeight(20)
+  btn:SetText("/" .. btn_name)
+  btn:SetNormalFontObject("GameFontNormalSmall")
 
-dance:SetScript('OnClick', function()
-  DoEmote("Dance")
-end)
+  local ntex = btn:CreateTexture()
+  ntex:SetTexture("Interface/Buttons/UI-Panel-Button-Up")
+  ntex:SetTexCoord(0, 0.625, 0, 0.6875)
+  ntex:SetAllPoints()	
+  btn:SetNormalTexture(ntex)
 
--- sleep --
-local sleep = CreateFrame("Button", nil, UIParent, "UIPanelButtonTemplate")
-sleep:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 130, 5)
-sleep:SetWidth(50)
-sleep:SetHeight(20)
-sleep:SetText("/sleep")
-sleep:SetNormalFontObject("GameFontNormalSmall")
-
-local ntex = sleep:CreateTexture()
-ntex:SetTexture("Interface/Buttons/UI-Panel-Button-Up")
-ntex:SetTexCoord(0, 0.625, 0, 0.6875)
-ntex:SetAllPoints()	
-sleep:SetNormalTexture(ntex)
-
-local ptex = sleep:CreateTexture()
-ptex:SetTexture("Interface/Buttons/UI-Panel-Button-Down")
-ptex:SetTexCoord(0, 0.625, 0, 0.6875)
-ptex:SetAllPoints()
-sleep:SetPushedTexture(ptex)
-
-sleep:SetScript('OnClick', function()
-  DoEmote("Sleep")
-end)
-
--- reload --
-local reload = CreateFrame("Button", nil, UIParent, "UIPanelButtonTemplate")
-reload:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 190, 5)
-reload:SetWidth(50)
-reload:SetHeight(20)
-reload:SetText("/reload")
-reload:SetNormalFontObject("GameFontNormalSmall")
-
-local ntex = reload:CreateTexture()
-ntex:SetTexture("Interface/Buttons/UI-Panel-Button-Up")
-ntex:SetTexCoord(0, 0.625, 0, 0.6875)
-ntex:SetAllPoints()	
-reload:SetNormalTexture(ntex)
-
-local ptex = reload:CreateTexture()
-ptex:SetTexture("Interface/Buttons/UI-Panel-Button-Down")
-ptex:SetTexCoord(0, 0.625, 0, 0.6875)
-ptex:SetAllPoints()
-reload:SetPushedTexture(ptex)
-
-reload:SetScript('OnClick', function()
-  ReloadUI()
-end)
-
--- movable frame --
-frame:SetMovable(true)
-frame:EnableMouse(true)
-frame:RegisterForDrag("RightButton")
-frame:SetScript("OnDragStart", frame.StartMoving)
-frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-
-
+  local ptex = btn:CreateTexture()
+  ptex:SetTexture("Interface/Buttons/UI-Panel-Button-Down")
+  ptex:SetTexCoord(0, 0.625, 0, 0.6875)
+  ptex:SetAllPoints()
+  btn:SetPushedTexture(ptex)
+    
+  btn:SetScript('OnClick', function(self)
+    btn_name = self:GetText() 
+    Slashie:ClickButton(btn_name) 
+  end)
+end
 
